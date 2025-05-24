@@ -1,0 +1,21 @@
+# Disable WebSocket (not applicable in Apache, ignored)
+
+# RewriteEngine must be on
+RewriteEngine On
+
+# Rule: NodeInspector – Do not process debugging route
+RewriteCond %{REQUEST_URI} ^/server\.js/debug/?$
+RewriteRule .* - [L]
+
+# Rule: StaticContent – Rewrite static files to build/ directory
+RewriteRule ^(.*)$ build/$1 [L]
+
+# Rule: DynamicContent – If the file does not exist, rewrite to server.js
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^.*$ server.js [L]
+
+# Security: Prevent access to /bin directory
+RedirectMatch 403 ^/bin(/|$)
+
+# Errors: Let Node handle error responses (similar to PassThrough)
+ProxyErrorOverride Off
